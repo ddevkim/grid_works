@@ -19,7 +19,7 @@ image.onload = () => {
     "#c10000",
     0.8,
     2,
-    40,
+    20,
     "#140e9c",
     0.9
   );
@@ -65,7 +65,9 @@ function makeGrid(
   const ctx = canvas.getContext("2d");
   const { width: canvas_w, height: canvas_h } = canvas;
   const interval =
-    (Math.max(canvas_w, canvas_h) - line_size * line_n) / (line_n + 1);
+    (Math.max(Math.min(canvas_w, grid_w), Math.min(canvas_h, grid_h)) -
+      line_size * line_n) /
+    (line_n + 1);
   const pixel_arr = ctx.getImageData(0, 0, canvas_w, canvas_h).data;
   const isBetween = (ll, hl) => (val) => val >= ll && val < hl;
   const getIndex = (x, y, w) => (x + y * w) * 4;
@@ -77,8 +79,8 @@ function makeGrid(
     if (isBetween(grid_y, grid_y + grid_h)(y)) {
       for (let x = 0; x < canvas_w; x++) {
         if (isBetween(grid_x, grid_x + grid_w)(x)) {
-          const r_x = x % (interval + line_size);
-          const r_y = y % (interval + line_size);
+          const r_x = (x - grid_x) % (interval + line_size);
+          const r_y = (y - grid_y) % (interval + line_size);
           if (some(isBetween(interval, interval + line_size), [r_x, r_y])) {
             const idx = getIndex(x, y, canvas_w);
             map((n) => (pixel_arr[idx + n] = line_color[n]), range(4));
